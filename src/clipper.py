@@ -58,3 +58,44 @@ def cut_and_caption(
         raise RuntimeError(f"ffmpeg failed:\n{result.stderr[-3000:]}")
 
     return output_path
+
+
+def render_clips(
+    video_path: str,
+    clips: list[dict],
+    words: list[dict],
+    output_dir: str = "output",
+    vertical: bool = True,
+) -> list[str]:
+    """
+    Renders multiple clips from the same source video + transcript in one
+    call, so you only download/transcribe once and can cut as many clips
+    as you want from it.
+
+    `clips` is a list of dicts, each describing one clip:
+        {"start": 78.0, "end": 125.0, "style": "bold_yellow"}   # style is optional, defaults to "bold_yellow"
+        {"start": 300.0, "end": 340.0, "style": "clean_white"}
+
+    Returns the list of output file paths, in the same order as `clips`.
+    """
+    # local import to avoid a circular import at module load time
+    from subtitles import generate_word_pop_ass
+
+    os.makedirs(output_dir, exist_ok=True)
+    outputs = []
+
+    for i, clip in enumerate(clips, start=1):
+        start = clip["start"]
+        end = clip["end"]
+        style = clip.get("style", "bold_yellow")
+
+        ass_path = os.path.join(output_dir, f"clip_{i:02d}_subs.ass")
+        generate_word_pop_ass(words, start, end, out_path=ass_path, style=style)
+
+        out_path = os.path.join(output_dir, f"clip_{i:02d}.mp4")
+        cut_and_caption(video_path, start, end, ass_path, out_path, vertical=vertical)
+
+        print(f"Rendered clip {i}: {out_path} ({start}s - {end}s, style={style})")
+        outputs.append(out_path)
+
+    return outputs
