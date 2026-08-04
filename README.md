@@ -44,5 +44,4 @@ moments so you don't have to scrub manually.
 
 ## A note on copyright
 
-Only use this on videos you own or have rights to clip -- same rule
-Cliphi and similar tools operate under.
+Only use this on videos you own or have rights to clip.
