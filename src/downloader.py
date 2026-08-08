@@ -9,12 +9,23 @@ import os
 import yt_dlp
 
 
-def download_video(url: str, output_dir: str = "downloads", max_height: int = 720) -> tuple[str, dict]:
+def download_video(
+    url: str,
+    output_dir: str = "downloads",
+    max_height: int = 720,
+    cookiefile: str | None = None,
+) -> tuple[str, dict]:
     """
     Downloads `url` and returns (path_to_mp4, info_dict).
 
     max_height=720 is plenty for shorts output. Lower it to 480 if you
     want to save even more bandwidth/disk on a Colab session.
+
+    cookiefile: path to a cookies.txt exported from your own logged-in
+    browser (e.g. via the "Get cookies.txt LOCALLY" extension). YouTube
+    often blocks cloud IPs like Colab's with a "confirm you're not a bot"
+    error -- passing real cookies fixes this. Leave as None if you're not
+    hitting that error.
     """
     os.makedirs(output_dir, exist_ok=True)
 
@@ -25,6 +36,9 @@ def download_video(url: str, output_dir: str = "downloads", max_height: int = 72
         "quiet": False,
         "noplaylist": True,
     }
+
+    if cookiefile:
+        ydl_opts["cookiefile"] = cookiefile
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
