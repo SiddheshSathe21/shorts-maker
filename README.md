@@ -27,6 +27,14 @@ moments so you don't have to scrub manually.
 5. Run the cells top to bottom, pasting your YouTube link and clip
    start/end times where marked.
 
+## "Sign in to confirm you're not a bot" error
+
+YouTube flags Colab's IPs as bots. Fix (built into the notebook as step 3):
+export a `cookies.txt` from your own logged-in browser (the ["Get cookies.txt
+LOCALLY"](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc)
+extension works well) and upload it when the notebook asks. It's passed to
+`download_video(..., cookiefile=...)` automatically after that.
+
 ## Storage notes
 
 - Nothing is installed or downloaded on your laptop -- everything lives
@@ -35,31 +43,12 @@ moments so you don't have to scrub manually.
   done pulling clips from it (run the last cell).
 - Only download the final `.mp4` clips you actually want to keep.
 
-## Subtitle styles
-
-Pass `style="..."` per clip. Built-in presets in `src/subtitles.py`:
-- `bold_yellow` -- white text, yellow pop, bottom-center (default)
-- `clean_white` -- white text, green pop, bottom-center, smaller/cleaner
-- `pink_pop_top` -- white text, pink pop, positioned near the top
-- `hype_red` -- bigger font, red pop, high-energy look
-
-Add your own preset by copying one of the dicts in `STYLE_PRESETS` and
-changing the colors/font/position. Colors are in ASS format `&HAABBGGRR&`.
-
-## Multiple clips per run
-
-`CLIPS` in the notebook is a list -- add as many `{"start":.., "end":.., "style":..}`
-entries as you want. You download and transcribe the source video once,
-then cut every clip from that single transcript in one call to `render_clips()`.
-
 ## Roadmap
 
 - [x] Phase 1: download, transcribe, manual clip selection, burned captions
-- [x] Selectable/customizable subtitle styles
-- [x] Batch rendering of multiple clips from one transcription
 - [ ] Phase 2: AI-suggested highlight moments (LLM scores the transcript)
 - [ ] Phase 3: active speaker tracking for the vertical crop (currently a
-      plain center crop)
+      plain center crop), style presets, batch processing
 
 ## A note on copyright
 
